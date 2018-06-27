@@ -4,6 +4,17 @@ import { createStackNavigator } from 'react-navigation';
 import AddFriendScreen from './AddFriendScreen';
 
 class HomeScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Splitwise',
+    headerStyle: {
+      backgroundColor: '#159688',
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    }
+  };
+
   render() {
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -50,6 +61,7 @@ class HomeScreen extends React.Component {
           <View style={styles.button}>
             <Button
               title="+ Add friends on splitwise"
+              color="#1aa898"
               onPress={() => this.props.navigation.navigate('AddFriend')}
             />
           </View>
