@@ -27,6 +27,10 @@ class HomeScreen extends React.Component {
   };
 
   render() {
+    const buttonText = (!Array.isArray(this.state.friends) || !this.state.friends.length)
+                          ? "+ Add friends on splitwise"
+                          : "+ Add more friends"
+
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
 
@@ -65,7 +69,7 @@ class HomeScreen extends React.Component {
         <View style={{flex: 1}}>
           <View style={styles.button}>
             <Button
-              title="+ Add friends on splitwise"
+              title={buttonText}
               color="#1aa898"
               onPress={() =>
                 this.props.navigation.navigate('AddFriend', {

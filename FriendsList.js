@@ -49,20 +49,24 @@ const styles = StyleSheet.create({
     textAlign: 'center' 
   },
   item: {
+    flex: 1,
     flexDirection: 'row',
     height: 60,
     alignItems: 'center',
     paddingLeft: 20,
+    paddingRight: 20,
     borderBottomColor: '#f4f4f4',
     borderBottomWidth: 1,
   },
   friendName: {
+    flex: 1,
     fontSize: 20
   },
   status: {
+    flex: 1,
     fontSize: 14,
-    position: 'absolute', right: 20,
-    // alignSelf: 'flex-end',  
+    // position: 'absolute', right: 20,
+    textAlign: 'right',  
   }
 });
 
