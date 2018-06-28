@@ -2,7 +2,10 @@ import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import AddFriendScreen from './AddFriendScreen';
+import AddBillScreen from './AddBillScreen';
 import FriendsList from './FriendsList';
+import ActionButton from 'react-native-action-button';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -17,7 +20,7 @@ class HomeScreen extends React.Component {
   };
 
   state = {
-    friends: []
+    friends: ['Жандос', 'Аян']
   }
 
   addFriend = (friend) => {
@@ -79,7 +82,22 @@ class HomeScreen extends React.Component {
             />
           </View>
         </View>
-      </View>
+
+        <ActionButton
+				  buttonColor="rgba(231,76,60,1)"
+				  onPress={() => {
+				  	this.props.navigation.navigate('AddBill', {
+              friends: this.state.friends
+            })
+				  }}
+				/>
+
+   		
+
+    </View>
+
+       
+
     );
   }
 }
@@ -88,6 +106,7 @@ const RootStack = createStackNavigator(
   {
     Home: HomeScreen,
     AddFriend: AddFriendScreen,
+    AddBill: AddBillScreen
   },
   {
     initialRouteName: 'Home',
@@ -113,7 +132,12 @@ const styles = StyleSheet.create({
   },
   textCentered: {
     textAlign: 'center' 
-  }
+  },
+   actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
+  },
 });
 
 export default class App extends React.Component {
