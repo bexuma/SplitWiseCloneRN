@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Button, Text, FlatList } from 'react-native';
+import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
 class AddBillScreen extends React.Component {
@@ -15,9 +15,47 @@ class AddBillScreen extends React.Component {
   };
 
   state = {
-    amount: '',
+    involvedFriends: [],
+    paidFriends: [],
+    totalAmount: '',
     description: ''
   };
+
+  addToInvolvedFriends = (friend) => {
+    this.state.involvedFriends.includes(friend)
+      ? this.setState({
+        involvedFriends: this.state.involvedFriends.filter(involvedFriend => involvedFriend !== friend)
+      })
+      : this.setState({
+        involvedFriends: [friend, ...this.state.involvedFriends]
+      });
+  }
+
+  addToPaidFriends = (friend) => {
+    this.state.paidFriends.includes(friend)
+      ? this.setState({
+        paidFriends: this.state.paidFriends.filter(paidFriend => paidFriend !== friend)
+      })
+      : this.setState({
+        paidFriends: [friend, ...this.state.paidFriends]
+      });
+  }
+
+  InvolvedFriendCheck = (friend) => {
+    const checked = (this.state.involvedFriends.includes(friend)) ? "checked" : ""
+
+    return (
+      <Text>{checked}</Text>
+    )
+  }
+
+  PaidFriendCheck = (friend) => {
+    const checked = (this.state.paidFriends.includes(friend)) ? "checked" : ""
+
+    return (
+      <Text>{checked}</Text>
+    )
+  }
 
   render() {
     const { navigation } = this.props
@@ -29,36 +67,40 @@ class AddBillScreen extends React.Component {
       <View style={{ flex: 1, backgroundColor: 'white', padding: 15 }}>
       	<Text style={styles.title}>Involved friends</Text>
 
-        <View style={{height: 72, marginBottom: 10}}>
+        <View style={{height: 36, marginBottom: 10}}>
           <FlatList
             data={friends}
+            extraData={this.InvolvedFriendCheck()}
             renderItem={({item}) =>
-              <View style={styles.item}>
+              <TouchableOpacity style={styles.item} onPress={()=> { this.addToInvolvedFriends(item) }}>
                 <Text style={styles.friendName}>{item}</Text>
+                {this.InvolvedFriendCheck(item)}
                 
-              </View>
+              </TouchableOpacity>
             }
           />
         </View>
 
         <Text style={styles.title}>Who paid?</Text>
 
-        <View style={{height: 108, marginBottom: 10}}>
-        <FlatList
+        <View style={{height: 72}}>
+          <FlatList
             data={who_paid}
+            extraData={this.PaidFriendCheck()}
             renderItem={({item}) =>
-              <View style={styles.item}>
+              <TouchableOpacity style={styles.item} onPress={()=> { this.addToPaidFriends(item) }}>
                 <Text style={styles.friendName}>{item}</Text>
+                {this.PaidFriendCheck(item)}
                 
-              </View>
+              </TouchableOpacity>
             }
           />
         </View>
 
         <TextInput
           label='Amount'
-          value={this.state.amount}
-          onChangeText={amount => this.setState({ amount })}
+          value={this.state.totalAmount}
+          onChangeText={totalAmount => this.setState({ totalAmount })}
           underlineColor='#159688'
         />
 
@@ -67,6 +109,19 @@ class AddBillScreen extends React.Component {
           value={this.state.description}
           onChangeText={description => this.setState({ description })}
           underlineColor='#159688'
+        />
+
+        <Button
+          title="Save"
+          color="#1aa898"
+          onPress={() => {
+            this.props.navigation.state.params.split(
+                this.state.involvedFriends,
+                this.state.paidFriends,
+                this.state.totalAmount,
+                this.state.description)
+            this.props.navigation.goBack()
+          }}
         />
 
       </View>

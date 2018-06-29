@@ -15,7 +15,10 @@ class AddFriendScreen extends React.Component {
   };
 
   state = {
-    friend: ''
+    friend: {
+      name: "",
+      relation: 200
+    },
   };
 
   render() {
@@ -26,8 +29,11 @@ class AddFriendScreen extends React.Component {
       	<View style={{ paddingHorizontal: 15, marginBottom: 15, paddingTop: 2}}>
 		      <TextInput
 			      label='Name'
-		        value={this.state.friend}
-		        onChangeText={friend => this.setState({ friend })}
+		        value={this.state.friend.name}
+		        onChangeText={inputName => this.setState({ friend: {
+              ...this.state.friend,
+              name: inputName,
+            } })}
 		        underlineColor='#159688'
 
 	          placeholder="Type your friend's name..."

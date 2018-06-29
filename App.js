@@ -20,7 +20,13 @@ class HomeScreen extends React.Component {
   };
 
   state = {
-    friends: ['Жандос', 'Аян']
+    friends: [
+      {name: "Жандос", relation: 200},
+      {name: "Аян", relation: 0},
+    ],
+    owe: 0,
+    owed: 0,
+    balance: 0
   }
 
   addFriend = (friend) => {
@@ -28,6 +34,80 @@ class HomeScreen extends React.Component {
       friends: [friend, ...this.state.friends]
     });
   };
+
+  split = (involvedFriends, paidFriends, totalAmount, description) => {
+    const eachShouldPay = totalAmount / (involvedFriends.length + 1)
+
+    if (paidFriends.includes("You")) {
+      
+      const youAreOwed = totalAmount - eachShouldPay
+      const eachOwes = youAreOwed / involvedFriends.length
+
+      this.setState({
+        owed: youAreOwed,
+        balance: youAreOwed - this.state.owe
+      })
+    } else {
+      const youOwe = eachShouldPay
+      if ((this.state.owed - youOwe) > 0) {
+        this.setState({
+          owe: 0,
+          balance: this.state.owed - youOwe,
+          owed: this.state.owed - youOwe
+        })
+      } else {
+        this.setState({
+          owe: youOwe - this.state.owed,
+          balance: this.state.owed - youOwe,
+          owed: this.state.owed - youOwe
+        })
+      }
+
+      
+    }
+
+  }
+
+  oweStyle = () => {
+    return (this.state.owe !== 0)
+    ? {
+      textAlign: 'center',
+      color: "red",
+    }
+    : {
+      textAlign: 'center',
+    }
+  }
+
+  owedStyle = () => {
+    return (this.state.owed !== 0)
+    ? {
+      textAlign: 'center',
+      color: "green",
+    }
+    : {
+      textAlign: 'center',
+    }
+  }
+
+  balanceStyle = () => {
+    if (this.state.balance < 0) {
+      return {
+        textAlign: 'center',
+        color: "red",
+      }
+    } else if (this.state.balance > 0) {
+      return {
+        textAlign: 'center',
+        color: "green",
+      }
+    } else {
+      return {
+        textAlign: 'center',
+      }
+    }
+  
+  }
 
   render() {
     const buttonText = (!Array.isArray(this.state.friends) || !this.state.friends.length)
@@ -42,8 +122,8 @@ class HomeScreen extends React.Component {
             <Text style={styles.textCentered}>
               You owe
             </Text>
-            <Text style={styles.textCentered}>
-              0 ₸
+            <Text style={this.oweStyle()}>
+              {this.state.owe} ₸
             </Text>
 
           </View>
@@ -51,8 +131,8 @@ class HomeScreen extends React.Component {
             <Text style={styles.textCentered}>
               You are owed
             </Text>
-            <Text style={styles.textCentered}>
-              0 ₸
+            <Text style={this.owedStyle()}>
+              {this.state.owed} ₸
             </Text>
 
           </View>
@@ -60,8 +140,8 @@ class HomeScreen extends React.Component {
             <Text style={styles.textCentered}>
               Total balance
             </Text>
-            <Text style={styles.textCentered}>
-              0 ₸
+            <Text style={this.balanceStyle()}>
+              {this.state.balance} ₸
             </Text>
 
           </View>
@@ -87,7 +167,8 @@ class HomeScreen extends React.Component {
 				  buttonColor="rgba(231,76,60,1)"
 				  onPress={() => {
 				  	this.props.navigation.navigate('AddBill', {
-              friends: this.state.friends
+              friends: this.state.friends,
+              split: this.split
             })
 				  }}
 				/>
@@ -131,7 +212,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   textCentered: {
-    textAlign: 'center' 
+    textAlign: 'center',
   },
    actionButtonIcon: {
     fontSize: 20,
