@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
 class AddBillScreen extends React.Component {
-	static navigationOptions = {
+  static navigationOptions = {
     title: 'Add a bill',
     headerStyle: {
       backgroundColor: '#159688',
@@ -61,20 +61,26 @@ class AddBillScreen extends React.Component {
     const { navigation } = this.props
     const friends = navigation.getParam('friends', 'nope')
     const who_paid = friends.slice()
-    who_paid.unshift('You')
+    who_paid.unshift({name: 'You'})
 
     return (
+      <KeyboardAvoidingView
+            behavior="position"
+            contentContainerStyle={{ flex: 1 }}
+            style={{ flex: 1 }}
+            keyboardVerticalOffset='-110'>
+            
       <View style={{ flex: 1, backgroundColor: 'white', padding: 15 }}>
-      	<Text style={styles.title}>Involved friends</Text>
+        <Text style={styles.title}>Involved friends</Text>
 
         <View style={{height: 36, marginBottom: 10}}>
           <FlatList
             data={friends}
             extraData={this.InvolvedFriendCheck()}
             renderItem={({item}) =>
-              <TouchableOpacity style={styles.item} onPress={()=> { this.addToInvolvedFriends(item) }}>
-                <Text style={styles.friendName}>{item}</Text>
-                {this.InvolvedFriendCheck(item)}
+              <TouchableOpacity style={styles.item} onPress={()=> { this.addToInvolvedFriends(item.name) }}>
+                <Text style={styles.friendName}>{item.name}</Text>
+                {this.InvolvedFriendCheck(item.name)}
                 
               </TouchableOpacity>
             }
@@ -88,9 +94,9 @@ class AddBillScreen extends React.Component {
             data={who_paid}
             extraData={this.PaidFriendCheck()}
             renderItem={({item}) =>
-              <TouchableOpacity style={styles.item} onPress={()=> { this.addToPaidFriends(item) }}>
-                <Text style={styles.friendName}>{item}</Text>
-                {this.PaidFriendCheck(item)}
+              <TouchableOpacity style={styles.item} onPress={()=> { this.addToPaidFriends(item.name) }}>
+                <Text style={styles.friendName}>{item.name}</Text>
+                {this.PaidFriendCheck(item.name)}
                 
               </TouchableOpacity>
             }
@@ -125,6 +131,7 @@ class AddBillScreen extends React.Component {
         />
 
       </View>
+      </KeyboardAvoidingView>
     );
   }
 }

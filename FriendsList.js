@@ -59,12 +59,16 @@ expenses = (relation) => {
     ? "you owe"
     : "you are owed"
 
+  const color = (relation < 0)
+    ? "red"
+    : "green"
+
   return (
     <View style={styles.status}>
-      <Text style={styles.statusMessage}>
+      <Text style={[styles.statusMessage, {color: color}]}>
         {message}
       </Text>
-      <Text style={styles.statusMessage}>
+      <Text style={[styles.statusMessage, {color: color}]}>
         {relation} ₸
       </Text>
     </View>
