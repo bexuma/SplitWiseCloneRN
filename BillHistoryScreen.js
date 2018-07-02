@@ -48,7 +48,7 @@ class BillHistoryScreen extends React.Component {
           {message}
         </Text>
         <Text style={[styles.statusMessage, {color: color}]}>
-          {balance} ₸
+          {Math.abs(balance)} ₸
         </Text>
       </View>
     )
