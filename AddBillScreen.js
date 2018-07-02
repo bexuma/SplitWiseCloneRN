@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, StyleSheet, Button, Text, ScrollView, FlatList, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -43,6 +43,10 @@ class AddBillScreen extends React.Component {
       : ( <View></View> )
   }
 
+  focusNextField(nextField) {
+    this.refs[nextField].focus();
+  }
+
   render() {
     const { navigation } = this.props
     const friends = navigation.getParam('friends', 'nope')
@@ -59,13 +63,14 @@ class AddBillScreen extends React.Component {
             behavior="position"
             contentContainerStyle={{ flex: 1 }}
             style={{ flex: 1 }}
-            keyboardVerticalOffset='-26'
+            keyboardVerticalOffset={80}
             enabled>
 
-        <View style={{ flex: 1, backgroundColor: 'white', padding: 15 }}>
+        <ScrollView keyboardShouldPersistTaps={true} style={{flex: 1, backgroundColor: 'white', padding: 15}}>
+
           <Text style={styles.title}>Involved friends</Text>
 
-          <View style={{height: 72, marginBottom: 10}}>
+          <View style={{marginBottom: 10}}>
             <FlatList
               data={friends}
               extraData={this.InvolvedFriendCheck()}
@@ -81,7 +86,7 @@ class AddBillScreen extends React.Component {
 
           <Text style={styles.title}>Who paid?</Text>
 
-          <View style={{height: 108}}>
+          <View>
             <FlatList
               data={this.state.paidFriends}
               extraData={this.addPayer, this.PayerCheck, this.state.payer}
@@ -96,21 +101,28 @@ class AddBillScreen extends React.Component {
           </View>
 
           <TextInput
+            ref="1"
+            returnKeyType="next"
             label='Amount'
+            keyboardType="numeric"
+            blurOnSubmit={false}
+            onSubmitEditing={() => this.focusNextField('2')}
             value={this.state.totalAmount}
             onChangeText={totalAmount => this.setState({ totalAmount })}
             underlineColor='#159688'
           />
 
           <TextInput
-            label='Description'
+            ref="2"
+            returnKeyType="done"
+            label='Description'          
             value={this.state.description}
             onChangeText={description => this.setState({ description })}
             underlineColor='#159688'
           />
 
           <TouchableOpacity
-            style={{marginTop: 15}}
+            style={{marginTop: 12, marginBottom: 13, height: 50}}
           >
             <Button
               title="Save"
@@ -126,8 +138,7 @@ class AddBillScreen extends React.Component {
               }}
             />
           </TouchableOpacity>
-
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     );
   }
@@ -152,12 +163,12 @@ const styles = StyleSheet.create({
   item: {
     flex: 1,
     flexDirection: 'row',
-    height: 36,
+    height: 42,
     alignItems: 'center'
   },
   friendName: {
     flex: 1,
-    fontSize: 20
+    fontSize: 18
   },
   status: {
     flex: 1,

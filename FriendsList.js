@@ -82,7 +82,7 @@ class FriendsList extends Component {
           {message}
         </Text>
         <Text style={[styles.statusMessage, {color: color}]}>
-          {aggregate_balance} ₸
+          {Math.abs(aggregate_balance.toFixed(2))} ₸
         </Text>
       </View>
     )

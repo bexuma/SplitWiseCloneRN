@@ -134,7 +134,7 @@ class HomeScreen extends React.Component {
       }
     }
 
-    return (owe === 0) ? "0" : -owe
+    return (owe === 0) ? "0" : -owe.toFixed(2)
   }
 
   owed = () => {
@@ -144,17 +144,18 @@ class HomeScreen extends React.Component {
         owed += TotalBalanceHelper.getAggregateBalance(this.state.friends[i].name, this.state.transactions)
       }
     }
-    return owed
+    return owed.toFixed(2)
   }
 
   oweStyle = (owe) => {
-    return (owe !== 0)
+    return (owe != 0)
     ? {
       textAlign: 'center',
       color: "red",
     }
     : {
       textAlign: 'center',
+      color: "black",
     }
   }
 
