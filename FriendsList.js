@@ -5,10 +5,11 @@ class FriendsList extends Component {
 
   render() {
     const friends = this.props.friends
+    const transactions = this.props.transactions
 
     return (!Array.isArray(friends) || !friends.length)
       ? noFriends()
-      : renderFriends(friends, this.props.navigation)
+      : renderFriends(friends, transactions, this.props.navigation)
   }
 }
 
@@ -22,7 +23,7 @@ noFriends = () => {
   )
 }
 
-renderFriends = (friends, navigation) => {
+renderFriends = (friends, transactions, navigation) => {
   return (
     <View style={{height: 360}}>
       <FlatList
@@ -31,7 +32,8 @@ renderFriends = (friends, navigation) => {
         renderItem={({item}) =>
           <TouchableOpacity style={styles.item} onPress={() =>
               navigation.navigate('BillHistory', {
-                friend: item
+                friend: item,
+                transactions: transactions.filter(transaction => transaction.name === item.name)
               })
             }>
             <Text style={styles.friendName}>{item.name}</Text>

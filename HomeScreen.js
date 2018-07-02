@@ -20,6 +20,10 @@ class HomeScreen extends React.Component {
       {name: "Жандос", relation: 0},
       {name: "Аян", relation: 0},
     ],
+    transactions: [
+      {description: "Пикник", name: "Жандос", balance: 100},
+      
+    ],
     owe: 0,
     owed: 0,
     balance: 0
@@ -61,48 +65,6 @@ class HomeScreen extends React.Component {
 
       
     }
-
-  }
-
-  oweStyle = () => {
-    return (this.state.owe !== 0)
-    ? {
-      textAlign: 'center',
-      color: "red",
-    }
-    : {
-      textAlign: 'center',
-    }
-  }
-
-  owedStyle = () => {
-    return (this.state.owed !== 0)
-    ? {
-      textAlign: 'center',
-      color: "green",
-    }
-    : {
-      textAlign: 'center',
-    }
-  }
-
-  balanceStyle = () => {
-    if (this.state.balance < 0) {
-      return {
-        textAlign: 'center',
-        color: "red",
-      }
-    } else if (this.state.balance > 0) {
-      return {
-        textAlign: 'center',
-        color: "green",
-      }
-    } else {
-      return {
-        textAlign: 'center',
-      }
-    }
-  
   }
 
   render() {
@@ -143,7 +105,7 @@ class HomeScreen extends React.Component {
           </View>
         </View>
 
-        <FriendsList friends={this.state.friends} navigation={this.props.navigation} />
+        <FriendsList friends={this.state.friends} transactions={this.state.transactions} navigation={this.props.navigation} />
 
         <View style={styles.button}>
           <Button
@@ -170,6 +132,47 @@ class HomeScreen extends React.Component {
       </View>
     );
   }
+
+    oweStyle = () => {
+    return (this.state.owe !== 0)
+    ? {
+      textAlign: 'center',
+      color: "red",
+    }
+    : {
+      textAlign: 'center',
+    }
+  }
+
+  owedStyle = () => {
+    return (this.state.owed !== 0)
+    ? {
+      textAlign: 'center',
+      color: "green",
+    }
+    : {
+      textAlign: 'center',
+    }
+  }
+
+  balanceStyle = () => {
+    if (this.state.balance < 0) {
+      return {
+        textAlign: 'center',
+        color: "red",
+      }
+    } else if (this.state.balance > 0) {
+      return {
+        textAlign: 'center',
+        color: "green",
+      }
+    } else {
+      return {
+        textAlign: 'center',
+      }
+    }
+  
+  }
 }
 
 const styles = StyleSheet.create({
@@ -188,7 +191,8 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    marginTop: 10
   },
   textCentered: {
     textAlign: 'center',

@@ -22,13 +22,27 @@ class AddBillScreen extends React.Component {
   }
 
   addToPaidFriends = (friend) => {
-    this.state.paidFriends.includes(friend)
-      ? this.setState({
+    if (this.state.paidFriends.length === 0) {
+      this.setState({
+        paidFriends: [friend, ...this.state.paidFriends]
+      })
+    } else if (this.state.paidFriends.includes(friend)) {
+      this.setState({
         paidFriends: this.state.paidFriends.filter(paidFriend => paidFriend !== friend)
       })
-      : this.setState({
-        paidFriends: [friend, ...this.state.paidFriends]
-      });
+    } else if ((this.state.paidFriends.length === 1) && (!this.state.paidFriends.includes(friend))) {
+      this.setState({
+        paidFriends: [friend]
+      })
+    }
+
+    // this.state.paidFriends.includes(friend) && this.state.paidFriends.length === 1
+    //   ? this.setState({
+    //     paidFriends: this.state.paidFriends.filter(paidFriend => paidFriend !== friend)
+    //   })
+    //   : this.setState({
+    //     paidFriends: [friend, ...this.state.paidFriends]
+    //   });
   }
 
   InvolvedFriendCheck = (friend) => {
@@ -48,13 +62,21 @@ class AddBillScreen extends React.Component {
     const friends = navigation.getParam('friends', 'nope')
     const who_paid = friends.slice()
     who_paid.unshift({name: 'You'})
+    disabled = true
+
+    if (this.state.involvedFriends.length > 0
+     && this.state.paidFriends.length === 1
+     && this.state.totalAmount !== ""
+     && this.state.description !== ""
+    ) { disabled = false }
 
     return (
       <KeyboardAvoidingView
             behavior="position"
             contentContainerStyle={{ flex: 1 }}
             style={{ flex: 1 }}
-            keyboardVerticalOffset='-26'>
+            keyboardVerticalOffset='-26'
+            enabled>
 
         <View style={{ flex: 1, backgroundColor: 'white', padding: 15 }}>
           <Text style={styles.title}>Involved friends</Text>
@@ -103,10 +125,13 @@ class AddBillScreen extends React.Component {
             underlineColor='#159688'
           />
 
-          <TouchableOpacity style={{marginTop: 15}}>
+          <TouchableOpacity
+            style={{marginTop: 15}}
+          >
             <Button
               title="Save"
               color="#1aa898"
+              disabled={disabled}
               onPress={() => {
                 this.props.navigation.state.params.split(
                     this.state.involvedFriends,
