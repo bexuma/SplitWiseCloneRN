@@ -16,13 +16,18 @@ class AddFriendScreen extends React.Component {
 
   state = {
     friend: {
-      name: "",
-      aggregate_balance: 200
+      name: ""
     },
   };
 
   render() {
   	const { navigation } = this.props;
+
+    disabled = true
+
+    if (this.state.friend.name !== "") {
+      disabled = false
+    }
 
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -44,6 +49,7 @@ class AddFriendScreen extends React.Component {
           <Button
             title="Save"
             color="#1aa898"
+            disabled={disabled}
             onPress={() => {
             	this.props.navigation.state.params.addFriend(this.state.friend)
             	this.props.navigation.goBack()

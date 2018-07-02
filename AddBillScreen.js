@@ -6,7 +6,8 @@ import Icon from 'react-native-vector-icons/Feather';
 class AddBillScreen extends React.Component {
   state = {
     involvedFriends: [],
-    paidFriends: [],
+    paidFriends: ['You'],
+    payer: '',
     totalAmount: '',
     description: ''
   };
@@ -14,35 +15,20 @@ class AddBillScreen extends React.Component {
   addToInvolvedFriends = (friend) => {
     this.state.involvedFriends.includes(friend)
       ? this.setState({
-        involvedFriends: this.state.involvedFriends.filter(involvedFriend => involvedFriend !== friend)
+        involvedFriends: this.state.involvedFriends.filter(involvedFriend => involvedFriend !== friend),
+        paidFriends: this.state.paidFriends.filter(paidFriend => paidFriend !== friend)
       })
       : this.setState({
-        involvedFriends: [friend, ...this.state.involvedFriends]
+        involvedFriends: [friend, ...this.state.involvedFriends],
+        paidFriends: [friend, ...this.state.paidFriends]
       });
   }
 
-  addToPaidFriends = (friend) => {
-    if (this.state.paidFriends.length === 0) {
-      this.setState({
-        paidFriends: [friend, ...this.state.paidFriends]
-      })
-    } else if (this.state.paidFriends.includes(friend)) {
-      this.setState({
-        paidFriends: this.state.paidFriends.filter(paidFriend => paidFriend !== friend)
-      })
-    } else if ((this.state.paidFriends.length === 1) && (!this.state.paidFriends.includes(friend))) {
-      this.setState({
-        paidFriends: [friend]
-      })
-    }
+  addPayer = (friend) => {
 
-    // this.state.paidFriends.includes(friend) && this.state.paidFriends.length === 1
-    //   ? this.setState({
-    //     paidFriends: this.state.paidFriends.filter(paidFriend => paidFriend !== friend)
-    //   })
-    //   : this.setState({
-    //     paidFriends: [friend, ...this.state.paidFriends]
-    //   });
+    this.setState({
+      payer: friend
+    })
   }
 
   InvolvedFriendCheck = (friend) => {
@@ -51,8 +37,8 @@ class AddBillScreen extends React.Component {
       : ( <View></View> )
   }
 
-  PaidFriendCheck = (friend) => {
-    return (this.state.paidFriends.includes(friend))
+  PayerCheck = (friend) => {
+    return (friend === this.state.payer)
       ? (<Icon name="check" size={20} color="#c23135" />)
       : ( <View></View> )
   }
@@ -60,13 +46,11 @@ class AddBillScreen extends React.Component {
   render() {
     const { navigation } = this.props
     const friends = navigation.getParam('friends', 'nope')
-    const who_paid = friends.slice()
-    who_paid.unshift({name: 'You'})
     disabled = true
 
     if (this.state.involvedFriends.length > 0
-     && this.state.paidFriends.length === 1
      && this.state.totalAmount !== ""
+     && !isNaN(this.state.totalAmount)
      && this.state.description !== ""
     ) { disabled = false }
 
@@ -99,12 +83,12 @@ class AddBillScreen extends React.Component {
 
           <View style={{height: 108}}>
             <FlatList
-              data={who_paid}
-              extraData={this.PaidFriendCheck()}
+              data={this.state.paidFriends}
+              extraData={this.addPayer, this.PayerCheck, this.state.payer}
               renderItem={({item}) =>
-                <TouchableOpacity style={styles.item} onPress={()=> { this.addToPaidFriends(item.name) }}>
-                  <Text style={styles.friendName}>{item.name}</Text>
-                  {this.PaidFriendCheck(item.name)}
+                <TouchableOpacity style={styles.item} onPress={()=> { this.addPayer(item) }}>
+                  <Text style={styles.friendName}>{item}</Text>
+                  {this.PayerCheck(item)}
                   
                 </TouchableOpacity>
               }
@@ -135,7 +119,7 @@ class AddBillScreen extends React.Component {
               onPress={() => {
                 this.props.navigation.state.params.split(
                     this.state.involvedFriends,
-                    this.state.paidFriends[0],
+                    this.state.payer,
                     this.state.totalAmount,
                     this.state.description)
                 this.props.navigation.goBack()

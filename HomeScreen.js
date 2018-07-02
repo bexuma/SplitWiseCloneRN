@@ -8,13 +8,14 @@ class HomeScreen extends React.Component {
 
   state = {
     friends: [
-      {name: "Жандос"},
-      {name: "Аян"},
+       {name: "Жандос"},
+       {name: "Аян"},
     ],
     transactions: [
       {name: "Жандос", description: "Кинотеатр", balance: 2000},
       {name: "Аян", description: "Пикник", balance: -500},
       {name: "Жандос", description: "Супермаркет", balance: 3000},
+      
     ]
   }
 
