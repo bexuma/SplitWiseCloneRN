@@ -2,31 +2,20 @@ import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import FriendsList from './FriendsList';
+import TotalBalanceHelper from './utils/totalBalanceHelper.js';
 
 class HomeScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Splitwise',
-    headerStyle: {
-      backgroundColor: '#159688',
-    },
-    headerTintColor: '#fff',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    }
-  };
 
   state = {
     friends: [
-      {name: "Жандос", relation: 0},
-      {name: "Аян", relation: 0},
+      {name: "Жандос"},
+      {name: "Аян"},
     ],
     transactions: [
-      {description: "Пикник", name: "Жандос", balance: 100},
-      
-    ],
-    owe: 0,
-    owed: 0,
-    balance: 0
+      {name: "Жандос", description: "Кинотеатр", balance: 2000},
+      {name: "Аян", description: "Пикник", balance: -500},
+      {name: "Жандос", description: "Супермаркет", balance: 3000},
+    ]
   }
 
   addFriend = (friend) => {
@@ -35,36 +24,45 @@ class HomeScreen extends React.Component {
     });
   };
 
-  split = (involvedFriends, paidFriends, totalAmount, description) => {
-    const eachShouldPay = totalAmount / (involvedFriends.length + 1)
-    const payingFriendPays = totalAmount
-    const unpaidOwes = eachShouldPay
+  split = (involvedFriendsNames, paidFriendName, totalAmount, description) => {
+    const eachShouldPay = totalAmount / (involvedFriendsNames.length + 1)
+    let transactions = []
 
-    if (paidFriends.includes("You")) {
-      const youAreOwed = totalAmount - eachShouldPay
-
-      this.setState({
-        owed: youAreOwed,
-        balance: youAreOwed - this.state.owe
-      })
-    } else {
-      const youOwe = eachShouldPay
-
-      if ((this.state.owed - youOwe) > 0) {
-        this.setState({
-          balance: this.state.owed - youOwe,
-          owed: this.state.owed - youOwe
-        })
-      } else {
-        this.setState({
-          owe: youOwe - this.state.owed,
-          balance: this.state.owed - youOwe,
-          owed: this.state.owed - youOwe
-        })
-      }
-
+    if (paidFriendName === "You") {
+      for(let i = 0; i < involvedFriendsNames.length; i++) {
+        transactions = [{description: description, name: involvedFriendsNames[i], balance: eachShouldPay}, ...transactions]
+      }   
       
+    } else {
+      for(let i = 0; i < involvedFriendsNames.length; i++) {
+        transactions = [{description: description, name: involvedFriendsNames[i], balance: -eachShouldPay}, ...transactions]
+      }
     }
+
+    this.setState({
+      transactions: [...transactions, ...this.state.transactions]
+    })
+    
+  }
+
+  iOwe = () => {
+    let iOwe = 0
+    for(let i = 0; i < this.state.friends.length; i++) {
+      if (TotalBalanceHelper.getAggregateBalance(this.state.friends[i].name, this.state.transactions) < 0) {
+        iOwe += TotalBalanceHelper.getAggregateBalance(this.state.friends[i].name, this.state.transactions)
+      }
+    }
+    return -iOwe
+  }
+
+  iAmOwed = () => {
+    let iAmOwed = 0
+    for(let i = 0; i < this.state.friends.length; i++) {
+      if (TotalBalanceHelper.getAggregateBalance(this.state.friends[i].name, this.state.transactions) > 0) {
+        iAmOwed += TotalBalanceHelper.getAggregateBalance(this.state.friends[i].name, this.state.transactions)
+      }
+    }
+    return iAmOwed
   }
 
   render() {
@@ -72,6 +70,7 @@ class HomeScreen extends React.Component {
                           ? "+ Add friends on splitwise"
                           : "+ Add more friends"
 
+                          console.log('state', this.state)
     return (
       <View style={{flex: 1, backgroundColor: 'white'}}>
 
@@ -81,7 +80,7 @@ class HomeScreen extends React.Component {
               You owe
             </Text>
             <Text style={this.oweStyle()}>
-              {this.state.owe} ₸
+              {this.iOwe()} ₸
             </Text>
 
           </View>
@@ -90,7 +89,7 @@ class HomeScreen extends React.Component {
               You are owed
             </Text>
             <Text style={this.owedStyle()}>
-              {this.state.owed} ₸
+              {this.iAmOwed()} ₸
             </Text>
 
           </View>
@@ -99,7 +98,7 @@ class HomeScreen extends React.Component {
               Total balance
             </Text>
             <Text style={this.balanceStyle()}>
-              {this.state.balance} ₸
+              {this.iAmOwed() - this.iOwe()} ₸
             </Text>
 
           </View>
@@ -120,20 +119,31 @@ class HomeScreen extends React.Component {
         </View>
 
         <ActionButton
-				  buttonColor="rgba(231,76,60,1)"
-				  onPress={() => {
-				  	this.props.navigation.navigate('AddBill', {
+          buttonColor="rgba(231,76,60,1)"
+          onPress={() => {
+            this.props.navigation.navigate('AddBill', {
               friends: this.state.friends,
               split: this.split
             })
-				  }}
-				/>
+          }}
+        />
 
       </View>
     );
   }
 
-    oweStyle = () => {
+  static navigationOptions = {
+    title: 'Splitwise',
+    headerStyle: {
+      backgroundColor: '#159688',
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    }
+  };
+
+  oweStyle = () => {
     return (this.state.owe !== 0)
     ? {
       textAlign: 'center',

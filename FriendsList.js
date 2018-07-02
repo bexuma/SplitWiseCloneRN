@@ -1,86 +1,92 @@
 import React, { Component } from 'react';
 import { AppRegistry, FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import TotalBalanceHelper from './utils/totalBalanceHelper.js';
 
 class FriendsList extends Component {
-
   render() {
     const friends = this.props.friends
-    const transactions = this.props.transactions
-
     return (!Array.isArray(friends) || !friends.length)
-      ? noFriends()
-      : renderFriends(friends, transactions, this.props.navigation)
+      ? this.noFriends()
+      : this.renderFriends(friends)
   }
-}
 
-noFriends = () => {
-  return (
-    <View style={{height: 100}}> 
-      <Text style={[ styles.textCentered, styles.noFriendsAdded ]}>
-        You have not added any friends yet
-      </Text>
-    </View>
-  )
-}
+  noFriends = () => {
+    return (
+      <View style={{height: 100}}> 
+        <Text style={[ styles.textCentered, styles.noFriendsAdded ]}>
+          You have not added any friends yet
+        </Text>
+      </View>
+    )
+  }
 
-renderFriends = (friends, transactions, navigation) => {
-  return (
-    <View style={{height: 360}}>
-      <FlatList
-        data={friends}
-        extraData={this.friendExpenses()}
-        renderItem={({item}) =>
-          <TouchableOpacity style={styles.item} onPress={() =>
-              navigation.navigate('BillHistory', {
-                friend: item,
-                transactions: transactions.filter(transaction => transaction.name === item.name)
-              })
-            }>
-            <Text style={styles.friendName}>{item.name}</Text>
-            {this.friendExpenses(item.relation)}
-          </TouchableOpacity>
-        }
-      />
-    </View>
-  )
-}
+  renderFriends = (friends) => {
+    return (
+      <View style={{height: 360}}>
+        <FlatList
+          data={friends}
+          extraData={this.props.transactions}
+          renderItem={this.renderItem}
+        />
+      </View>
+    )
+  }
 
-friendExpenses = relation => {
-  return (relation === 0)
-      ? noExpenses()
-      : expenses(relation)
-}
+  renderItem = ({ item }) => {
+    const { transactions, navigation } = this.props;
 
-noExpenses = () => {
-  return (
-    <View style={styles.status}>
-      <Text style={styles.statusMessage}>
-        no expenses
-      </Text>
-    </View>
-  )
-}
+    return (
+      <TouchableOpacity style={styles.item} onPress={() =>
+          navigation.navigate('BillHistory', {
+            friend: item,
+            transactions: transactions.filter(transaction => transaction.name === item.name)
+          })
+        }>
+        <Text style={styles.friendName}>{item.name}</Text>
+        {this.friendExpenses(item.name)}
+      </TouchableOpacity>
+    )
+  }
 
-expenses = (relation) => {
-  const message = (relation < 0)
-    ? "you owe"
-    : "you are owed"
 
-  const color = (relation < 0)
-    ? "red"
-    : "green"
+  friendExpenses = (friendName) => {
+    const aggregate_balance = TotalBalanceHelper.getAggregateBalance(friendName, this.props.transactions)
 
-  return (
-    <View style={styles.status}>
-      <Text style={[styles.statusMessage, {color: color}]}>
-        {message}
-      </Text>
-      <Text style={[styles.statusMessage, {color: color}]}>
-        {relation} ₸
-      </Text>
-    </View>
-  )
-  
+    return (aggregate_balance === 0)
+        ? this.noExpenses()
+        : this.expenses(aggregate_balance)
+  }
+
+  noExpenses = () => {
+    return (
+      <View style={styles.status}>
+        <Text style={styles.statusMessage}>
+          no expenses
+        </Text>
+      </View>
+    )
+  }
+
+  expenses = (aggregate_balance) => {
+    const message = (aggregate_balance < 0)
+      ? "you owe"
+      : "you are owed"
+
+    const color = (aggregate_balance < 0)
+      ? "red"
+      : "green"
+
+    return (
+      <View style={styles.status}>
+        <Text style={[styles.statusMessage, {color: color}]}>
+          {message}
+        </Text>
+        <Text style={[styles.statusMessage, {color: color}]}>
+          {aggregate_balance} ₸
+        </Text>
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
@@ -114,5 +120,6 @@ const styles = StyleSheet.create({
     textAlign: 'right', 
   }
 });
+
 
 export default FriendsList

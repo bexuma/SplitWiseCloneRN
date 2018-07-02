@@ -135,7 +135,7 @@ class AddBillScreen extends React.Component {
               onPress={() => {
                 this.props.navigation.state.params.split(
                     this.state.involvedFriends,
-                    this.state.paidFriends,
+                    this.state.paidFriends[0],
                     this.state.totalAmount,
                     this.state.description)
                 this.props.navigation.goBack()

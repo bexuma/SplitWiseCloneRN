@@ -5,6 +5,8 @@ import AddFriendScreen from './AddFriendScreen';
 import AddBillScreen from './AddBillScreen';
 import BillHistoryScreen from './BillHistoryScreen';
 
+console.disableYellowBox = true;
+
 const RootStack = createStackNavigator(
   {
     Home: HomeScreen,

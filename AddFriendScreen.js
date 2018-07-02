@@ -17,7 +17,7 @@ class AddFriendScreen extends React.Component {
   state = {
     friend: {
       name: "",
-      relation: 200
+      aggregate_balance: 200
     },
   };
 
