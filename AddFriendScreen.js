@@ -67,5 +67,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AddFriendScreen;
+export default AddFriendScreen
 

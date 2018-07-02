@@ -1,19 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, Button, Text, FlatList, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { TextInput } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Feather';
 
 class AddBillScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Add a bill',
-    headerStyle: {
-      backgroundColor: '#159688',
-    },
-    headerTintColor: '#fff',
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    }
-  };
-
   state = {
     involvedFriends: [],
     paidFriends: [],
@@ -42,19 +32,15 @@ class AddBillScreen extends React.Component {
   }
 
   InvolvedFriendCheck = (friend) => {
-    const checked = (this.state.involvedFriends.includes(friend)) ? "checked" : ""
-
-    return (
-      <Text>{checked}</Text>
-    )
+    return (this.state.involvedFriends.includes(friend))
+      ? (<Icon name="check" size={20} color="#c23135" />)
+      : ( <View></View> )
   }
 
   PaidFriendCheck = (friend) => {
-    const checked = (this.state.paidFriends.includes(friend)) ? "checked" : ""
-
-    return (
-      <Text>{checked}</Text>
-    )
+    return (this.state.paidFriends.includes(friend))
+      ? (<Icon name="check" size={20} color="#c23135" />)
+      : ( <View></View> )
   }
 
   render() {
@@ -68,72 +54,85 @@ class AddBillScreen extends React.Component {
             behavior="position"
             contentContainerStyle={{ flex: 1 }}
             style={{ flex: 1 }}
-            keyboardVerticalOffset='-110'>
-            
-      <View style={{ flex: 1, backgroundColor: 'white', padding: 15 }}>
-        <Text style={styles.title}>Involved friends</Text>
+            keyboardVerticalOffset='-26'>
 
-        <View style={{height: 36, marginBottom: 10}}>
-          <FlatList
-            data={friends}
-            extraData={this.InvolvedFriendCheck()}
-            renderItem={({item}) =>
-              <TouchableOpacity style={styles.item} onPress={()=> { this.addToInvolvedFriends(item.name) }}>
-                <Text style={styles.friendName}>{item.name}</Text>
-                {this.InvolvedFriendCheck(item.name)}
-                
-              </TouchableOpacity>
-            }
+        <View style={{ flex: 1, backgroundColor: 'white', padding: 15 }}>
+          <Text style={styles.title}>Involved friends</Text>
+
+          <View style={{height: 72, marginBottom: 10}}>
+            <FlatList
+              data={friends}
+              extraData={this.InvolvedFriendCheck()}
+              renderItem={({item}) =>
+                <TouchableOpacity style={styles.item} onPress={()=> { this.addToInvolvedFriends(item.name) }}>
+                  <Text style={styles.friendName}>{item.name}</Text>
+                  {this.InvolvedFriendCheck(item.name)}
+                  
+                </TouchableOpacity>
+              }
+            />
+          </View>
+
+          <Text style={styles.title}>Who paid?</Text>
+
+          <View style={{height: 108}}>
+            <FlatList
+              data={who_paid}
+              extraData={this.PaidFriendCheck()}
+              renderItem={({item}) =>
+                <TouchableOpacity style={styles.item} onPress={()=> { this.addToPaidFriends(item.name) }}>
+                  <Text style={styles.friendName}>{item.name}</Text>
+                  {this.PaidFriendCheck(item.name)}
+                  
+                </TouchableOpacity>
+              }
+            />
+          </View>
+
+          <TextInput
+            label='Amount'
+            value={this.state.totalAmount}
+            onChangeText={totalAmount => this.setState({ totalAmount })}
+            underlineColor='#159688'
           />
-        </View>
 
-        <Text style={styles.title}>Who paid?</Text>
-
-        <View style={{height: 72}}>
-          <FlatList
-            data={who_paid}
-            extraData={this.PaidFriendCheck()}
-            renderItem={({item}) =>
-              <TouchableOpacity style={styles.item} onPress={()=> { this.addToPaidFriends(item.name) }}>
-                <Text style={styles.friendName}>{item.name}</Text>
-                {this.PaidFriendCheck(item.name)}
-                
-              </TouchableOpacity>
-            }
+          <TextInput
+            label='Description'
+            value={this.state.description}
+            onChangeText={description => this.setState({ description })}
+            underlineColor='#159688'
           />
+
+          <TouchableOpacity style={{marginTop: 15}}>
+            <Button
+              title="Save"
+              color="#1aa898"
+              onPress={() => {
+                this.props.navigation.state.params.split(
+                    this.state.involvedFriends,
+                    this.state.paidFriends,
+                    this.state.totalAmount,
+                    this.state.description)
+                this.props.navigation.goBack()
+              }}
+            />
+          </TouchableOpacity>
+
         </View>
-
-        <TextInput
-          label='Amount'
-          value={this.state.totalAmount}
-          onChangeText={totalAmount => this.setState({ totalAmount })}
-          underlineColor='#159688'
-        />
-
-        <TextInput
-          label='Description'
-          value={this.state.description}
-          onChangeText={description => this.setState({ description })}
-          underlineColor='#159688'
-        />
-
-        <Button
-          title="Save"
-          color="#1aa898"
-          onPress={() => {
-            this.props.navigation.state.params.split(
-                this.state.involvedFriends,
-                this.state.paidFriends,
-                this.state.totalAmount,
-                this.state.description)
-            this.props.navigation.goBack()
-          }}
-        />
-
-      </View>
       </KeyboardAvoidingView>
     );
   }
+
+  static navigationOptions = {
+    title: 'Add a bill',
+    headerStyle: {
+      backgroundColor: '#159688',
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    }
+  };
 }
 
 const styles = StyleSheet.create({

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { AppRegistry, FlatList, StyleSheet, Text, View } from 'react-native';
+import { AppRegistry, FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 class FriendsList extends Component {
+
   render() {
     const friends = this.props.friends
 
     return (!Array.isArray(friends) || !friends.length)
       ? noFriends()
-      : renderFriends(friends)
+      : renderFriends(friends, this.props.navigation)
   }
 }
 
@@ -21,17 +22,21 @@ noFriends = () => {
   )
 }
 
-renderFriends = friends => {
+renderFriends = (friends, navigation) => {
   return (
     <View style={{height: 360}}>
       <FlatList
         data={friends}
         extraData={this.friendExpenses()}
         renderItem={({item}) =>
-          <View style={styles.item}>
+          <TouchableOpacity style={styles.item} onPress={() =>
+              navigation.navigate('FriendBillHistory', {
+                friend: item
+              })
+            }>
             <Text style={styles.friendName}>{item.name}</Text>
             {this.friendExpenses(item.relation)}
-          </View>
+          </TouchableOpacity>
         }
       />
     </View>
