@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Button, Text } from 'react-native';
 
-class FriendBillHistoryScreen extends React.Component {
+class BillHistoryScreen extends React.Component {
 	static navigationOptions = ({ navigation }) => ({
     title: navigation.state.params.friend.name,
     headerStyle: {
@@ -24,5 +24,5 @@ class FriendBillHistoryScreen extends React.Component {
   }
 }
 
-export default FriendBillHistoryScreen
+export default BillHistoryScreen
 

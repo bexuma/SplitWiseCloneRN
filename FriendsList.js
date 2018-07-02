@@ -30,7 +30,7 @@ renderFriends = (friends, navigation) => {
         extraData={this.friendExpenses()}
         renderItem={({item}) =>
           <TouchableOpacity style={styles.item} onPress={() =>
-              navigation.navigate('FriendBillHistory', {
+              navigation.navigate('BillHistory', {
                 friend: item
               })
             }>

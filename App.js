@@ -3,14 +3,14 @@ import { createStackNavigator } from 'react-navigation';
 import HomeScreen from './HomeScreen';
 import AddFriendScreen from './AddFriendScreen';
 import AddBillScreen from './AddBillScreen';
-import FriendBillHistoryScreen from './FriendBillHistoryScreen';
+import BillHistoryScreen from './BillHistoryScreen';
 
 const RootStack = createStackNavigator(
   {
     Home: HomeScreen,
     AddFriend: AddFriendScreen,
     AddBill: AddBillScreen,
-    FriendBillHistory: FriendBillHistoryScreen
+    BillHistory: BillHistoryScreen
   },
   {
     initialRouteName: 'Home',
